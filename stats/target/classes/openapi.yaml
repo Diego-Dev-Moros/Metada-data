@@ -1,0 +1,522 @@
+openapi: 3.1.0
+info:
+  title: MetaMapa - Servicio de Estadísticas
+  version: 1.0.0
+  description: >
+    Microservicio de solo lectura que calcula y expone estadísticas agregadas
+    (provincias, categorías, distribución horaria y spam) y permite exportarlas en CSV.
+    Los datos se recalculan periódicamente mediante un scheduler y se persisten en el
+    repositorio local del servicio.
+
+servers:
+  - url: https://api.tu-dominio.org/api
+    description: Producción
+  - url: https://staging.tu-dominio.org/api
+    description: Staging
+
+tags:
+  - name: Stats
+    description: Endpoints públicos de estadísticas
+  - name: Export
+    description: Exportaciones CSV
+  - name: Admin
+    description: Operaciones administrativas (mantenimiento / recalculo)
+
+security:
+  - ApiKeyAuth: []
+  # - BearerAuth: []  # Si preferís JWT, habilitá esta línea y deshabilitá ApiKeyAuth arriba.
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    # ---------- WRAPPERS DE RESPUESTA  tt ----------
+    ApiResponseProvincia:
+      type: object
+      properties:
+        success: { type: boolean }
+        data: { $ref: '#/components/schemas/ProvinciaStatsDTO' }
+        message: { type: string }
+    ApiResponseCategoria:
+      type: object
+      properties:
+        success: { type: boolean }
+        data: { $ref: '#/components/schemas/CategoriaStatsDTO' }
+        message: { type: string }
+    ApiResponseSpam:
+      type: object
+      properties:
+        success: { type: boolean }
+        data: { $ref: '#/components/schemas/SpamStatsDTO' }
+        message: { type: string }
+    ApiResponseHoraDistribucion:
+      type: object
+      properties:
+        success: { type: boolean }
+        data:
+          type: object
+          properties:
+            categoria: { type: string }
+            distribucion:
+              type: array
+              items: { $ref: '#/components/schemas/HoraDistribucionItem' }
+            hora_peak:
+              type: integer
+              minimum: 0
+              maximum: 23
+            fechaCalculo:
+              type: string
+              format: date-time
+        message: { type: string }
+    ApiResponseDashboard:
+      type: object
+      properties:
+        success: { type: boolean }
+        data:
+          type: object
+          additionalProperties: true
+          description: Objeto con los widgets/tiles del dashboard (top provincia, top categoría, hora pico, spam, etc.)
+        message: { type: string }
+    ApiResponseSimple:
+      type: object
+      properties:
+        success: { type: boolean }
+        message: { type: string }
+        details:
+          type: object
+          additionalProperties: true
+
+    # ---------- DTOs ----------
+    ProvinciaStatsDTO:
+      type: object
+      properties:
+        provincia: { type: string, example: "Córdoba" }
+        cantidadHechos: { type: integer, format: int64, example: 532 }
+        porcentaje: { type: number, format: double, example: 41.2 }
+        fechaCalculo: { type: string, format: date-time, example: "2025-10-30T11:00:00Z" }
+        coleccionId: { type: integer, format: int64, example: 123 }
+        categoria: { type: string, nullable: true }
+    CategoriaStatsDTO:
+      type: object
+      properties:
+        categoria: { type: string, example: "Incendio Forestal" }
+        cantidadHechos: { type: integer, format: int64, example: 1220 }
+        porcentaje: { type: number, format: double, example: 32.8 }
+        fechaCalculo: { type: string, format: date-time, example: "2025-10-30T11:00:00Z" }
+    HoraDistribucionItem:
+      type: object
+      properties:
+        hora:
+          type: integer
+          minimum: 0
+          maximum: 23
+          example: 19
+        cantidadHechos:
+          type: integer
+          format: int64
+          example: 87
+        porcentaje:
+          type: number
+          format: double
+          example: 8.6
+    SpamStatsDTO:
+      type: object
+      properties:
+        totalSolicitudes: { type: integer, format: int64, example: 1240 }
+        solicitudesSpam: { type: integer, format: int64, example: 37 }
+        solicitudesNoSpam: { type: integer, format: int64, example: 1203 }
+        porcentajeSpam: { type: number, format: double, example: 2.98 }
+        porcentajeNoSpam: { type: number, format: double, example: 97.02 }
+        fechaCalculo: { type: string, format: date-time, example: "2025-10-30T11:00:00Z" }
+
+    CSVExportDTO:
+      type: object
+      properties:
+        tipoExportacion: { type: string, example: "provincias" }
+        nombreArchivo: { type: string, example: "provincias_123.csv" }
+        rutaArchivo: { type: string, example: "/exports/2025-10-30/provincias_123.csv" }
+        fechaExportacion: { type: string, format: date-time, example: "2025-10-30T11:05:00Z" }
+        totalRegistros: { type: integer, format: int64, example: 24 }
+        columnas:
+          type: array
+          items: { type: string }
+          example: [ "coleccionId", "provincia", "cantidadHechos", "porcentaje", "fechaCalculo" ]
+        estado:
+          type: string
+          enum: [ COMPLETADO, EN_PROCESO, ERROR ]
+          example: COMPLETADO
+        mensaje: { type: string, example: "Exportación generada correctamente" }
+
+    ErrorResponse:
+      type: object
+      properties:
+        success: { type: boolean, example: false }
+        error: { type: string, example: "Bad Request" }
+        message: { type: string, example: "Parámetro 'categoria' es requerido" }
+        timestamp: { type: string, format: date-time }
+        path: { type: string, example: "/api/stats/hora/categoria/Incendio%20Forestal" }
+
+  parameters:
+    ColeccionIdPath:
+      name: coleccionId
+      in: path
+      required: true
+      description: Identificador numérico de la colección
+      schema: { type: integer, format: int64 }
+    CategoriaPath:
+      name: categoria
+      in: path
+      required: true
+      description: Nombre de categoría normalizada
+      schema: { type: string }
+
+  responses:
+    BadRequest:
+      description: Parámetros inválidos
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+    Unauthorized:
+      description: No autorizado
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+    NotFound:
+      description: Recurso no encontrado
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+    TooManyRequests:
+      description: Límite de peticiones excedido
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+    InternalError:
+      description: Error interno del servidor
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+
+paths:
+  # ====================== STATS PÚBLICO ======================
+  /stats/provincia/{coleccionId}:
+    get:
+      tags: [Stats]
+      summary: Provincia con más hechos para una colección
+      parameters:
+        - $ref: '#/components/parameters/ColeccionIdPath'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponseProvincia' }
+              examples:
+                ejemplo:
+                  value:
+                    success: true
+                    data:
+                      provincia: "Córdoba"
+                      cantidadHechos: 532
+                      porcentaje: 41.2
+                      fechaCalculo: "2025-10-30T11:00:00Z"
+                      coleccionId: 123
+                      categoria: null
+                    message: "Provincia con mayor cantidad de hechos"
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /stats/categoria:
+    get:
+      tags: [Stats]
+      summary: Categoría con más hechos
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponseCategoria' }
+              examples:
+                ejemplo:
+                  value:
+                    success: true
+                    data:
+                      categoria: "Incendio Forestal"
+                      cantidadHechos: 1220
+                      porcentaje: 32.8
+                      fechaCalculo: "2025-10-30T11:00:00Z"
+                    message: "Categoría con mayor cantidad de hechos"
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /stats/provincia/categoria/{categoria}:
+    get:
+      tags: [Stats]
+      summary: Provincia top para una categoría
+      parameters:
+        - $ref: '#/components/parameters/CategoriaPath'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponseProvincia' }
+              examples:
+                ejemplo:
+                  value:
+                    success: true
+                    data:
+                      provincia: "Córdoba"
+                      cantidadHechos: 311
+                      porcentaje: 28.3
+                      fechaCalculo: "2025-10-30T11:00:00Z"
+                      coleccionId: 123
+                      categoria: "Incendio Forestal"
+                    message: "Provincia top para la categoría solicitada"
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /stats/hora/categoria/{categoria}:
+    get:
+      tags: [Stats]
+      summary: Distribución horaria para una categoría
+      parameters:
+        - $ref: '#/components/parameters/CategoriaPath'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponseHoraDistribucion' }
+              examples:
+                ejemplo:
+                  value:
+                    success: true
+                    data:
+                      categoria: "Incendio Forestal"
+                      distribucion:
+                        - { hora: 0, cantidadHechos: 8, porcentaje: 0.8 }
+                        - { hora: 1, cantidadHechos: 5, porcentaje: 0.5 }
+                        - { hora: 19, cantidadHechos: 87, porcentaje: 8.6 }
+                        - { hora: 23, cantidadHechos: 17, porcentaje: 1.7 }
+                      hora_peak: 19
+                      fechaCalculo: "2025-10-30T11:00:00Z"
+                    message: "Distribución por horas"
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /stats/spam:
+    get:
+      tags: [Stats]
+      summary: Porcentaje y totales de solicitudes de eliminación marcadas como spam
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponseSpam' }
+              examples:
+                ejemplo:
+                  value:
+                    success: true
+                    data:
+                      totalSolicitudes: 1240
+                      solicitudesSpam: 37
+                      solicitudesNoSpam: 1203
+                      porcentajeSpam: 2.98
+                      porcentajeNoSpam: 97.02
+                      fechaCalculo: "2025-10-30T11:00:00Z"
+                    message: "Indicadores de spam"
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /stats/dashboard:
+    get:
+      tags: [Stats]
+      summary: Resumen para dashboard de estadísticas
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponseDashboard' }
+              examples:
+                ejemplo:
+                  value:
+                    success: true
+                    data:
+                      provinciaTop: { provincia: "Córdoba", cantidadHechos: 532 }
+                      categoriaTop: { categoria: "Incendio Forestal", cantidadHechos: 1220 }
+                      horaPeak: 19
+                      spam:
+                        porcentajeSpam: 2.98
+                        totalSolicitudes: 1240
+                      generadoEn: "2025-10-30T11:00:00Z"
+                    message: "Dashboard de última corrida"
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  # ====================== EXPORT CSV ======================
+  /stats/export/provincias/{coleccionId}:
+    get:
+      tags: [Export]
+      summary: Exporta CSV de provincias para una colección
+      parameters:
+        - $ref: '#/components/parameters/ColeccionIdPath'
+      responses:
+        '200':
+          description: CSV generado
+          headers:
+            Content-Disposition:
+              description: Nombre sugerido de archivo
+              schema: { type: string, example: 'attachment; filename="provincias_123.csv"' }
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /stats/export/categorias:
+    get:
+      tags: [Export]
+      summary: Exporta CSV de categorías
+      responses:
+        '200':
+          description: CSV generado
+          headers:
+            Content-Disposition:
+              description: Nombre sugerido de archivo
+              schema: { type: string, example: 'attachment; filename="categorias.csv"' }
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /stats/export/completo:
+    get:
+      tags: [Export]
+      summary: Exporta CSV consolidado con todas las métricas
+      responses:
+        '200':
+          description: CSV generado
+          headers:
+            Content-Disposition:
+              description: Nombre sugerido de archivo
+              schema: { type: string, example: 'attachment; filename="estadisticas_completo.csv"' }
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /stats/export/limpiar:
+    post:
+      tags: [Export]
+      summary: Limpia archivos CSV antiguos (housekeeping)
+      responses:
+        '200':
+          description: Operación ejecutada
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponseSimple' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /stats/export/archivos:
+    get:
+      tags: [Export]
+      summary: Lista exportaciones CSV disponibles
+      responses:
+        '200':
+          description: Listado de archivos
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: array
+                    items: { $ref: '#/components/schemas/CSVExportDTO' }
+                  message: { type: string }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  # ====================== ADMIN ======================
+  /admin/stats/recalcular:
+    post:
+      tags: [Admin]
+      summary: Fuerza recálculo de estadísticas
+      responses:
+        '200':
+          description: Recalculo iniciado/completado
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponseSimple' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /admin/stats/cache/limpiar:
+    post:
+      tags: [Admin]
+      summary: Limpia caché interno de estadísticas (si aplica)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponseSimple' }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /admin/stats/estado:
+    get:
+      tags: [Admin]
+      summary: Estado del servicio (última corrida, versión, etc.)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  data:
+                    type: object
+                    additionalProperties: true
+                    example:
+                      ultimaEjecucion: "2025-10-30T11:00:00Z"
+                      version: "1.0.0"
+                      scheduler: "0 0 * * *"
+                  message: { type: string }
+        '500': { $ref: '#/components/responses/InternalError' }
+
+  /admin/stats/csv/limpiar:
+    post:
+      tags: [Admin]
+      summary: Limpia exportaciones CSV (equivalente operativo)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ApiResponseSimple' }
+        '500': { $ref: '#/components/responses/InternalError' }

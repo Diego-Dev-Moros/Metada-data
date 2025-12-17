@@ -1,0 +1,232 @@
+.reportes-page {
+    min-height: 100vh;
+    padding: 2rem;
+    background-color: #f5f5f5;
+}
+
+.reportes-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.reportes-container h1 {
+    color: #333;
+    margin-bottom: 0.5rem;
+}
+
+.subtitulo {
+    color: #666;
+    margin-bottom: 2rem;
+    font-size: 1rem;
+}
+
+.sin-reportes {
+    text-align: center;
+    color: #666;
+    margin-top: 3rem;
+    font-size: 1.1rem;
+}
+
+.reportes-lista {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.reporte-card {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.reporte-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.reporte-header h3 {
+    color: #333;
+    margin: 0;
+}
+
+.estado {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.estado.pendiente {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.estado.en-revisión {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.estado.aprobado {
+    background-color: #28a745;
+    color: white;
+}
+
+.estado.rechazado {
+    background-color: #dc3545;
+    color: white;
+}
+
+.reporte-info {
+    margin-bottom: 1rem;
+}
+
+.reporte-info p {
+    color: #555;
+    margin: 0.5rem 0;
+}
+
+.reporte-acciones {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+}
+
+.reporte-acciones button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.btn-ver {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-ver:hover {
+    background-color: #0056b3;
+}
+
+.btn-aprobar {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-aprobar:hover {
+    background-color: #218838;
+}
+
+.btn-rechazar {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-rechazar:hover {
+    background-color: #c82333;
+}
+
+.btn-sugerencias {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.btn-sugerencias:hover {
+    background-color: #e0a800;
+}
+
+/* Modales */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+.modal-content h2 {
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+
+.modal-content p {
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.modal-input,
+.modal-textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    font-family: inherit;
+}
+
+.modal-textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.modal-acciones {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+}
+
+.btn-confirmar {
+    background-color: #28a745;
+    color: white;
+    padding: 0.5rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.btn-confirmar:hover {
+    background-color: #218838;
+}
+
+.btn-confirmar-rechazar {
+    background-color: #dc3545;
+}
+
+.btn-confirmar-rechazar:hover {
+    background-color: #c82333;
+}
+
+.btn-cancelar {
+    background-color: #6c757d;
+    color: white;
+    padding: 0.5rem 1.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.btn-cancelar:hover {
+    background-color: #5a6268;
+}

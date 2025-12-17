@@ -1,0 +1,119 @@
+/* =========================================
+   Login.css
+   Estilos base para formularios de autenticación (Login y Register).
+   ========================================= */
+
+/* Contenedor general centrado */
+.auth-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f5f6f8;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* Tarjeta del formulario */
+.auth-container {
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+}
+
+/* Título */
+.auth-title {
+    color: #222;
+    margin-bottom: 25px;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+/* Grupo de campos */
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+    font-size: 0.95rem;
+}
+
+/* Inputs */
+.form-group input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: border-color 0.2s ease;
+}
+
+.form-group input:focus {
+    border-color: #3a6ea5;
+    outline: none;
+    box-shadow: 0 0 4px rgba(58, 110, 165, 0.2);
+}
+
+/* Botón principal */
+.submit-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #3a6ea5;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.25s ease;
+}
+
+.submit-button:hover {
+    background-color: #005ecb;
+}
+
+/* Texto de error */
+.auth-error {
+    color: red;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+/* Enlace secundario (botón de registro) */
+.auth-secondary-link {
+    margin-top: 18px;
+    background: transparent;
+    color: #2d4f77;
+    border: none;
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: block;
+    width: 100%;
+    font-weight: 500;
+    transition: color 0.2s ease;
+    text-decoration: none;
+}
+
+.auth-secondary-link:hover {
+    color: #2f5e90;
+    text-decoration: underline;
+}
+
+/* Responsivo */
+@media (max-width: 576px) {
+    .auth-container {
+        padding: 28px 20px;
+    }
+    .auth-title {
+        font-size: 1.3rem;
+    }
+}

@@ -1,0 +1,45 @@
+.map-wrapper{ position:relative; }
+
+/* “pines” de colores (simples) */
+.pin .dot{
+    display:inline-block;
+    width:14px; height:14px;
+    border-radius:50%;
+    border:2px solid #fff;
+    box-shadow:0 0 0 2px rgba(0,0,0,.15);
+}
+.dot.verde{ background:#2ecc71; }
+.dot.naranja{ background:#f39c12; }
+.dot.rojo{ background:#e74c3c; }
+
+/* popup botones */
+.btn-popup{
+    margin-right:8px;
+    padding:6px 10px;
+    border-radius:8px;
+    border:1px solid #dfe3e8;
+    background:#fff;
+    cursor:pointer;
+}
+.btn-popup.warn{ background:#e9f2ff; border-color:#c8ddff; }
+
+/* meta/leyenda abajo */
+.map-meta{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:8px 12px;
+    background:#fff;
+    border-top:1px solid #e4e6ea;
+}
+
+
+.update{ color:#6b7280; font-size:.9rem; }
+
+@media (max-width: 768px) {
+    .map-wrapper .leaflet-container { height: 60vh !important; }
+    .map-meta { flex-direction: column; gap: 8px; align-items: flex-start; }
+}
+@media (max-width: 576px) {
+    .map-wrapper .leaflet-container { height: 50vh !important; }
+}

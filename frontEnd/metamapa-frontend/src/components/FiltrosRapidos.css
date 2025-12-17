@@ -1,0 +1,128 @@
+/* Panel principal */
+.panel-filtros {
+    background: #fff;
+    border: 1px solid #e3e6ea;
+    padding: 16px;
+    border-radius: 12px;
+    box-shadow: 0 1px 0 #f0f2f5;
+    color-scheme: light; /* fuerza esquema claro */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.panel-filtros h3 {
+    margin: 0 0 12px;
+}
+
+.lbl {
+    display: block;
+    font-weight: 600;
+    margin-top: 10px;
+    margin-bottom: 6px;
+}
+
+/* Inputs */
+.in {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #cfd6de;
+    border-radius: 10px;
+    padding: 10px 12px;
+    background: #ffffff;
+    color: #222;
+    caret-color: #3a6ea5;
+    outline: none;
+}
+
+.in::placeholder {
+    color: #6b7280;
+    opacity: 1;
+}
+
+.in:focus {
+    border-color: #3a6ea5;
+    box-shadow: 0 0 0 3px rgba(58, 110, 165, 0.15);
+}
+
+/* --- Rango Fecha --- */
+.range {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: center;
+}
+
+.range-field {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.mini-label {
+    font-size: 0.7rem;
+    color: #4b5563;
+}
+
+.range-field .in {
+    height: 36px;
+    padding: 4px 8px;
+    font-size: 0.85rem;         /* 🔹 texto más chico */
+    min-width: 0;
+    text-align: left;
+}
+
+input[type="date"].in {
+    font-family: inherit;
+    letter-spacing: 0.5px;
+    text-transform: lowercase;
+    width: 100%;
+    min-width: 120px;           /* 🔹 asegura espacio para “dd/mm/aaaa” */
+    background: #fff;
+}
+
+@media (max-width: 576px) {
+    .panel-filtros { padding: 12px; }
+    .range { grid-template-columns: 1fr 20px 1fr; }
+    .range-field .in { font-size: 0.82rem; height: 34px; }
+}
+
+
+.sep {
+    text-align: center;
+    color: #8a8a8a;
+    user-select: none;
+}
+
+/* Radios */
+.radios {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.radios label {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    color: #333;
+}
+
+/* Botón aplicar */
+.btn-apply {
+    margin-top: 14px;
+    width: 100%;
+    background: #27ae60;
+    color: #fff;
+    border: none;
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: filter 0.2s ease;
+}
+
+.btn-apply:hover {
+    filter: brightness(0.95);
+}

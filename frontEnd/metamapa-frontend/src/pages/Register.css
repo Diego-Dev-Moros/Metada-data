@@ -1,0 +1,122 @@
+/* espacio por el navbar fijo + mismo fondo que login/contacto */
+.register-page {
+    padding-top: 100px;
+    min-height: 100vh;
+    background: #f5f6f8;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+/* la card */
+.register-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 38px 42px 32px;
+    width: 90%;
+    max-width: 460px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+    margin-bottom: 60px;
+}
+
+.register-card h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 22px;
+    color: #162031;
+}
+
+.register-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.register-form label {
+    display: flex;
+    flex-direction: column;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #243046;
+}
+
+.register-form input {
+    margin-top: 6px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #cfd5dd;
+    background: #fff;
+    color: #222;
+    font-size: 0.9rem;
+}
+
+.register-form input:focus {
+    outline: none;
+    border-color: #3a6ea5;
+    box-shadow: 0 0 0 2px rgba(58, 110, 165, 0.08);
+}
+
+/* mensajes */
+.reg-ok {
+    background: rgba(15, 149, 64, 0.07);
+    border: 1px solid rgba(15, 149, 64, 0.5);
+    color: #137138;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.85rem;
+}
+
+.reg-err {
+    background: rgba(224, 43, 43, 0.08);
+    border: 1px solid rgba(224, 43, 43, 0.35);
+    color: #a11717;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.85rem;
+}
+
+/* botón principal */
+.reg-btn {
+    background: #3a6ea5;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 11px 0;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    margin-top: 6px;
+}
+
+.reg-btn:hover {
+    background: #325f90;
+}
+
+/* botón/link de abajo */
+.register-secondary-link {
+    margin-top: 18px;
+    background: transparent;
+    border: none;
+    color: #2d4f77;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-align: center;
+    width: 100%;
+}
+
+.register-secondary-link:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 576px) {
+    .register-card {
+        width: 92%;
+        padding: 26px 18px 24px;
+    }
+    .register-card h1 {
+        font-size: 1.45rem;
+    }
+}

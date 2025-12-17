@@ -1,0 +1,107 @@
+.solicitud-detalle-page {
+    min-height: 100vh;
+    padding: 2rem;
+    background-color: #f5f5f5;
+}
+
+.solicitud-detalle-container {
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-volver {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 1rem;
+}
+
+.btn-volver:hover {
+    background-color: #5a6268;
+}
+
+.solicitud-detalle-container h1 {
+    color: #333;
+    margin-bottom: 1.5rem;
+}
+
+.solicitud-info {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+}
+
+.info-row {
+    display: flex;
+    align-items: center;
+    margin: 1rem 0;
+    gap: 1rem;
+}
+
+.info-row .label {
+    font-weight: bold;
+    color: #333;
+    min-width: 150px;
+}
+
+.estado {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.estado.pendiente {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.estado.en-revisión {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.estado.aprobada {
+    background-color: #28a745;
+    color: white;
+}
+
+.estado.rechazada {
+    background-color: #dc3545;
+    color: white;
+}
+
+.link-hecho {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.link-hecho:hover {
+    text-decoration: underline;
+}
+
+.solicitud-motivo,
+.solicitud-descripcion {
+    margin-bottom: 1.5rem;
+}
+
+.solicitud-motivo h2,
+.solicitud-descripcion h2 {
+    color: #333;
+    margin-bottom: 0.75rem;
+    font-size: 1.3rem;
+}
+
+.solicitud-motivo p,
+.solicitud-descripcion p {
+    color: #555;
+    line-height: 1.6;
+}

@@ -1,0 +1,105 @@
+.contacto-page {
+    padding-top: 100px; /* espacio por el navbar fijo */
+    min-height: 100vh;
+    background-color: #f5f6f8;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.contacto-card {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 40px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    margin-bottom: 60px;
+}
+
+.contacto-card h1 {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.contacto-sub {
+    text-align: center;
+    color: #555;
+    font-size: 0.95rem;
+    margin-bottom: 25px;
+}
+
+.contacto-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.contacto-form label {
+    display: flex;
+    flex-direction: column;
+    font-weight: 600;
+    color: #222;
+    font-size: 0.9rem;
+}
+
+.contacto-form input,
+.contacto-form textarea {
+    margin-top: 6px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 0.9rem;
+    color: #222;
+    background-color: white;
+    transition: border-color 0.2s ease;
+}
+
+.contacto-form input:focus,
+.contacto-form textarea:focus {
+    border-color: #3a6ea5;
+    outline: none;
+}
+
+.contacto-form textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.char-count {
+    text-align: right;
+    font-size: 0.8rem;
+    color: #777;
+    margin-top: 4px;
+}
+
+.contacto-form button {
+    background-color: #3a6ea5;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.25s ease;
+}
+
+.contacto-form button:hover {
+    background-color: #2f5e90;
+}
+
+.ok-msg {
+    margin-top: 10px;
+    text-align: center;
+    color: #2d7a35;
+    font-weight: 600;
+}
+
+@media (max-width: 576px) {
+    .contacto-card { padding: 24px 16px; width: 92%; }
+    .contacto-card h1 { font-size: 1.5rem; }
+}

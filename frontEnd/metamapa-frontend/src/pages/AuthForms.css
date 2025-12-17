@@ -1,0 +1,115 @@
+/* =========================================
+   AuthForms.css
+   Estilos generales para los formularios de autenticación
+   ========================================= */
+
+/* * IMPORTANTE: Se eliminan los estilos del 'body' de este archivo
+ * para evitar conflictos con el layout global de la aplicación
+ * (headers, footers, etc.).
+ * El body debe ser estilizado en un archivo CSS global (ej. index.css).
+ */
+/*
+body {
+    background-color: #f0f2f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+}
+*/
+
+.auth-page-wrapper {
+    /* * Aseguramos que el contenedor de la página de autenticación
+     * use todo el espacio vertical disponible (100% del viewport)
+     * y centre el contenido.
+     */
+    display: flex;
+    justify-content: center; /* Centrado horizontal */
+    align-items: center; /* Centrado vertical */
+    min-height: 100vh; /* Ocupa al menos toda la altura del viewport */
+    padding: 20px;
+    background-color: #f0f2f5;
+    /* * Usamos overflow-y: auto para evitar que la página se corte
+     * si el contenido es más alto que el viewport.
+     */
+    overflow-y: auto;
+}
+
+.auth-container {
+    background: #ffffff;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    /* Añadido margen auto para asegurar centralización horizontal si el contenedor tiene padding */
+    margin: auto;
+}
+
+.auth-title {
+    color: #333;
+    margin-bottom: 25px;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #555;
+    font-size: 14px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+}
+
+.submit-button {
+    width: 100%;
+    padding: 12px 0;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+    background-color: #0056b3;
+}
+
+.switch-auth-link {
+    display: block;
+    margin-top: 20px;
+    color: #007bff;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.switch-auth-link:hover {
+    text-decoration: underline;
+}

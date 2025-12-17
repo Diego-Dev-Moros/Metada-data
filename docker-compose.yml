@@ -1,0 +1,105 @@
+version: '3.8'
+
+services:
+  # MySQL - Base de datos central (agregador y gestor-solicitudes)
+  mysql:
+    image: mysql:8.0
+    container_name: metamapa-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: utndds
+      MYSQL_USER: metamapa
+      MYSQL_PASSWORD: metamapa123
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./limpiar_base_datos.sql:/docker-entrypoint-initdb.d/01-limpiar.sql
+      - ./crear_indice_fulltext.sql:/docker-entrypoint-initdb.d/02-fulltext.sql
+    networks:
+      - metamapa-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MongoDB - Fuente dinámica
+  mongodb:
+    image: mongo:6.0
+    container_name: metamapa-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+      MONGO_INITDB_DATABASE: fuenteDinamica
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - metamapa-network
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MongoDB para fuente estática (opcional, si usa MongoDB)
+  mongodb-estatica:
+    image: mongo:6.0
+    container_name: metamapa-mongodb-estatica
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+      MONGO_INITDB_DATABASE: fuenteEstatica
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongodb_estatica_data:/data/db
+    networks:
+      - metamapa-network
+
+  # Opcional: Adminer para gestión visual de MySQL
+  adminer:
+    image: adminer:latest
+    container_name: metamapa-adminer
+    restart: unless-stopped
+    ports:
+      - "8090:8080"
+    networks:
+      - metamapa-network
+    depends_on:
+      - mysql
+
+  # Opcional: Mongo Express para gestión visual de MongoDB
+  mongo-express:
+    image: mongo-express:latest
+    container_name: metamapa-mongo-express
+    restart: unless-stopped
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: admin123
+      ME_CONFIG_MONGODB_URL: mongodb://admin:admin123@mongodb:27017/
+      ME_CONFIG_BASICAUTH_USERNAME: admin
+      ME_CONFIG_BASICAUTH_PASSWORD: admin
+    ports:
+      - "8091:8081"
+    networks:
+      - metamapa-network
+    depends_on:
+      - mongodb
+
+volumes:
+  mysql_data:
+    driver: local
+  mongodb_data:
+    driver: local
+  mongodb_estatica_data:
+    driver: local
+
+networks:
+  metamapa-network:
+    driver: bridge

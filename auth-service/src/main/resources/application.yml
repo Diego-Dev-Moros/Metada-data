@@ -1,0 +1,79 @@
+server:
+  port: 8086
+
+spring:
+  application:
+    name: auth-service
+  
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # URL del issuer de Auth0 (IMPORTANTE: incluir / al final)
+          issuer-uri: https://dev-x8zpgn3i6vnkjg4m.us.auth0.com/
+          # Audiences permitidos
+          audiences:
+            - https://metamapa-api
+
+# Configuración personalizada de Auth0
+auth0:
+  # Dominio de Auth0
+  domain: dev-x8zpgn3i6vnkjg4m.us.auth0.com
+  
+  # Audience de la API
+  audience: https://metamapa-api
+  
+  # Client ID de la aplicación
+  clientId: 0NvvByZW4f91QPIMeBv2iAvZDbXOU3xO
+  
+  # Client Secret (NO compartir en repositorio público)
+  # Configurar como variable de entorno: AUTH0_CLIENT_SECRET
+  clientSecret: ${AUTH0_CLIENT_SECRET:}
+  
+  # Token de Management API (opcional, para operaciones administrativas)
+  # Configurar como variable de entorno: AUTH0_MANAGEMENT_TOKEN
+  managementApiToken: ${AUTH0_MANAGEMENT_TOKEN:}
+  
+  # Namespace para claims personalizados
+  namespace: https://metamapa.com
+
+# Configuración de CORS
+cors:
+  allowed-origins:
+    - http://localhost:5173  # Vite dev server
+    - http://localhost:3000  # React dev server alternativo
+    - https://metamapa.com   # Producción (cambiar por tu dominio)
+  allowed-methods:
+    - GET
+    - POST
+    - PUT
+    - DELETE
+    - PATCH
+    - OPTIONS
+  allowed-headers:
+    - Authorization
+    - Content-Type
+    - X-Requested-With
+    - Accept
+  allow-credentials: true
+  max-age: 3600
+
+# Logging para debugging
+logging:
+  level:
+    root: INFO
+    com.metamapa.auth: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.security.oauth2: DEBUG
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+# Management endpoints (opcional, para monitoring)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: always

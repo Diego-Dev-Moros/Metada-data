@@ -1,0 +1,112 @@
+.usuarios-page {
+    min-height: 100vh;
+    padding: 2rem;
+    background-color: #f5f5f5;
+}
+
+.usuarios-container {
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.usuarios-container h1 {
+    color: #333;
+    margin-bottom: 1.5rem;
+}
+
+.filtros-usuarios {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filtros-usuarios label {
+    font-weight: bold;
+    color: #333;
+}
+
+.filtros-usuarios select {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.sin-usuarios {
+    text-align: center;
+    color: #666;
+    margin-top: 3rem;
+    font-size: 1.1rem;
+}
+
+.usuarios-lista {
+    background-color: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
+}
+
+.usuarios-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.usuarios-table thead {
+    background-color: #f8f9fa;
+}
+
+.usuarios-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: bold;
+    color: #333;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.usuarios-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #dee2e6;
+    color: #555;
+}
+
+.usuarios-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.rol-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.rol-badge.administrador {
+    background-color: #dc3545;
+    color: white;
+}
+
+.rol-badge.contribuyente {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-ver-perfil {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.btn-ver-perfil:hover {
+    background-color: #0056b3;
+}

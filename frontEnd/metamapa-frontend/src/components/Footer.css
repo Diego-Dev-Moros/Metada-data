@@ -1,0 +1,13 @@
+.footer-metamapa {
+    background-color: #3a6ea5;
+    color: white;
+}
+
+.footer-metamapa a {
+    color: #f1f1f1;
+}
+
+.footer-metamapa a:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}

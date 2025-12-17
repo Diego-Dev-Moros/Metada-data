@@ -1,0 +1,117 @@
+{
+  "info": {
+    "name": "MetaMapa - Flujo Completo",
+    "description": "Testing del flujo completo de creación, moderación y agregación",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "1. Crear Hecho (API Interna)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"titulo\": \"Incendio en fábrica de Buenos Aires\",\n    \"descripcion\": \"Gran incendio industrial afectó una fábrica en zona oeste\",\n    \"categoria\": \"tecnologia\",\n    \"latitud\": -34.6037,\n    \"longitud\": -58.3816,\n    \"fechaHecho\": \"2025-10-23T14:30:00\",\n    \"nombreContribuyente\": \"Juan Pérez\",\n    \"apellidoContribuyente\": \"González\",\n    \"edadContribuyente\": 35,\n    \"esAnonimo\": false\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8081/api/interna/hechos",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["api", "interna", "hechos"]
+        }
+      }
+    },
+    {
+      "name": "2. Ver Hechos Pendientes (Admin)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8081/api/admin/hechos/pendientes",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["api", "admin", "hechos", "pendientes"]
+        }
+      }
+    },
+    {
+      "name": "3. Aprobar Hecho (Admin)",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "http://localhost:8081/api/admin/hechos/{{hechoId}}/aprobar",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["api", "admin", "hechos", "{{hechoId}}", "aprobar"]
+        }
+      }
+    },
+    {
+      "name": "4. Ejecutar Agregación Manual",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "http://localhost:8081/api/admin/agregacion/ejecutar",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["api", "admin", "agregacion", "ejecutar"]
+        }
+      }
+    },
+    {
+      "name": "5. Ver Hechos Agregados (API Interna)",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8081/api/interna/hechos",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["api", "interna", "hechos"]
+        }
+      }
+    },
+    {
+      "name": "6. Ver Estadísticas de Agregación",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8081/api/admin/agregacion/estadisticas",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8081",
+          "path": ["api", "admin", "agregacion", "estadisticas"]
+        }
+      }
+    },
+    {
+      "name": "7. Verificar Fuente Dinámica Directamente",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8082/api/fuente-dinamica/hechosTODOS",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8082",
+          "path": ["api", "fuente-dinamica", "hechosTODOS"]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "hechoId",
+      "value": "1",
+      "description": "ID del hecho a aprobar (cambiar según respuesta del paso 2)"
+    }
+  ]
+}

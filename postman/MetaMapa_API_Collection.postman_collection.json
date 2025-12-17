@@ -1,0 +1,388 @@
+{
+	"info": {
+		"_postman_id": "metamapa-api-testing",
+		"name": "MetaMapa API Testing",
+		"description": "Colección completa para probar todas las APIs de MetaMapa",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8081",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "🟢 API PÚBLICA",
+			"item": [
+				{
+					"name": "Obtener todas las colecciones",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/public/colecciones",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "public", "colecciones"]
+						}
+					}
+				},
+				{
+					"name": "Obtener hechos de una colección",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/public/colecciones/1/hechos",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "public", "colecciones", "1", "hechos"]
+						}
+					}
+				},
+				{
+					"name": "Obtener hechos filtrados de una colección",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/public/colecciones/1/hechos/filtrados?palabrasClave=incendio,ataque",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "public", "colecciones", "1", "hechos", "filtrados"],
+							"query": [
+								{
+									"key": "palabrasClave",
+									"value": "incendio,ataque"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Crear solicitud de eliminación",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"tituloHecho\": \"Título del hecho a eliminar\",\n  \"justificacion\": \"Este hecho contiene información incorrecta\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/public/solicitudes",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "public", "solicitudes"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "🔴 API ADMINISTRATIVA",
+			"item": [
+				{
+					"name": "Obtener todas las colecciones (Admin)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/colecciones",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "colecciones"]
+						}
+					}
+				},
+				{
+					"name": "Crear nueva colección",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"titulo\": \"Mi Nueva Colección\",\n  \"descripcion\": \"Descripción de la nueva colección\",\n  \"algoritmoConsenso\": \"MAYORIA_SIMPLE\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/colecciones",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "colecciones"]
+						}
+					}
+				},
+				{
+					"name": "Obtener colección específica",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/colecciones/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "colecciones", "1"]
+						}
+					}
+				},
+				{
+					"name": "Actualizar colección",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"titulo\": \"Título actualizado\",\n  \"descripcion\": \"Nueva descripción actualizada\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/colecciones/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "colecciones", "1"]
+						}
+					}
+				},
+				{
+					"name": "Eliminar colección",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/colecciones/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "colecciones", "1"]
+						}
+					}
+				},
+				{
+					"name": "Cambiar algoritmo de consenso",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"algoritmoConsenso\": \"ABSOLUTA\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/colecciones/1/algoritmo",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "colecciones", "1", "algoritmo"]
+						}
+					}
+				},
+				{
+					"name": "Obtener fuentes disponibles",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/fuentes",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "fuentes"]
+						}
+					}
+				},
+				{
+					"name": "Agregar fuente a colección",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"idFuente\": \"fuente-dinamica\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/colecciones/1/fuentes",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "colecciones", "1", "fuentes"]
+						}
+					}
+				},
+				{
+					"name": "Quitar fuente de colección",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/colecciones/1/fuentes/fuente-dinamica",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "colecciones", "1", "fuentes", "fuente-dinamica"]
+						}
+					}
+				},
+				{
+					"name": "Obtener todas las solicitudes",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/solicitudes",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "solicitudes"]
+						}
+					}
+				},
+				{
+					"name": "Aprobar solicitud",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/solicitudes/1/aprobar",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "solicitudes", "1", "aprobar"]
+						}
+					}
+				},
+				{
+					"name": "Rechazar solicitud",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/admin/solicitudes/1/rechazar",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "admin", "solicitudes", "1", "rechazar"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "🔧 API AGREGADOR",
+			"item": [
+				{
+					"name": "Obtener colecciones (Agregador)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/agregador/colecciones",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "agregador", "colecciones"]
+						}
+					}
+				},
+				{
+					"name": "Obtener colección específica (Agregador)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/agregador/colecciones/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "agregador", "colecciones", "1"]
+						}
+					}
+				},
+				{
+					"name": "Obtener hechos de colección (Agregador)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/agregador/colecciones/1/hechos",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "agregador", "colecciones", "1", "hechos"]
+						}
+					}
+				},
+				{
+					"name": "Actualizar colección (Agregador)",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/agregador/colecciones/1/actualizar",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "agregador", "colecciones", "1", "actualizar"]
+						}
+					}
+				},
+				{
+					"name": "Eliminar colección (Agregador)",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/agregador/colecciones/1",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "agregador", "colecciones", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "🆔 API INTERNAL (IDs)",
+			"item": [
+				{
+					"name": "Generar ID para hecho",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/internal/ids/hechos",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "internal", "ids", "hechos"]
+						}
+					}
+				},
+				{
+					"name": "Generar ID para colección",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/internal/ids/colecciones",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "internal", "ids", "colecciones"]
+						}
+					}
+				},
+				{
+					"name": "Generar ID para solicitud",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/internal/ids/solicitudes",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "internal", "ids", "solicitudes"]
+						}
+					}
+				},
+				{
+					"name": "Generar múltiples IDs para hechos",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/internal/ids/hechos/batch/5",
+							"host": ["{{baseUrl}}"],
+							"path": ["api", "internal", "ids", "hechos", "batch", "5"]
+						}
+					}
+				}
+			]
+		}
+	]
+}

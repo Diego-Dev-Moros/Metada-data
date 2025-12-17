@@ -1,0 +1,378 @@
+package com.metamapa.service;
+
+import com.metamapa.dto.CargaCsvResultado;
+import com.metamapa.dto.HechoDTO;
+import com.metamapa.entities.FuenteDeDatos;
+import com.metamapa.entities.archivosDataset.EstadoArchivo;
+import com.metamapa.entities.hechos.Hecho;
+import com.metamapa.entities.hechos.OrigenHecho;
+import com.metamapa.entities.ubicaciones.Ubicacion;
+import com.metamapa.entities.mongo.HechoEstatico;
+import com.metamapa.entities.mongo.ArchivoDatasetMongo;
+import com.metamapa.mapper.HechoMapper;
+import com.metamapa.repository.mongo.HechoEstaticoRepository;
+import com.metamapa.repository.mongo.ArchivoDatasetMongoRepository;
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvValidationException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.security.MessageDigest;
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@Slf4j
+@RequiredArgsConstructor
+public class FuenteEstaticaService implements FuenteDeDatos {
+    
+    private final HechoEstaticoRepository hechoRepository;
+    private final ArchivoDatasetMongoRepository archivoRepository;
+    private final String identificador = "ESTATICA";
+
+    public CargaCsvResultado cargarHechos(MultipartFile file) {
+        log.info("Iniciando carga de CSV: {} (tamaño: {} bytes)", file.getOriginalFilename(), file.getSize());
+
+        try {
+            // 1) Calcular hash del archivo
+            log.info("Calculando hash del archivo...");
+            String hash = calcularSha256(file);
+            
+            // 2) Verificar si el archivo ya existe
+            ArchivoDatasetMongo archivoExistente = archivoRepository.findByHash(hash).orElse(null);
+            
+            if (archivoExistente != null) {
+                log.info("Archivo duplicado detectado (hash: {}). Estado actual: {}", hash, archivoExistente.getEstado());
+                return new CargaCsvResultado(
+                    0, 0, 0, 0, 
+                    new ArrayList<>(), 
+                    "⚠️ Archivo ya existe en el sistema con estado: " + archivoExistente.getEstado()
+                );
+            }
+            
+            // 3) Guardar archivo en PENDIENTE (sin procesar)
+            ArchivoDatasetMongo archivo = new ArchivoDatasetMongo();
+            archivo.setNombreArchivo(file.getOriginalFilename());
+            archivo.setHash(hash);
+            archivo.setContenido(file.getBytes());
+            archivo.setFechaCarga(LocalDateTime.now());
+            archivo.setEstado(EstadoArchivo.PENDIENTE);
+            
+            archivo = archivoRepository.save(archivo);
+            log.info("✅ Archivo guardado con estado PENDIENTE. ID: {}", archivo.getId());
+            
+            return new CargaCsvResultado(
+                0, 0, 0, 0,
+                new ArrayList<>(),
+                "✅ Archivo cargado exitosamente. Será procesado por el agregador en el próximo ciclo."
+            );
+            
+        } catch (IOException e) {
+            log.error("Error al leer el archivo", e);
+            throw new IllegalArgumentException("No se pudo leer el archivo: " + e.getMessage());
+        }
+    }
+        
+        // 2) Verificar si el archivo ya fue procesado
+        ArchivoDatasetMongo archivoExistente = archivoRepository.findByHash(hash).orElse(null);
+        boolean archivoYaProcesado = archivoExistente != null;
+        
+        // 3) Si el archivo existe, verificar si sus hechos todavía existen
+        boolean hechosTodaviaExisten = false;
+        if (archivoYaProcesado) {
+            long cantidadHechos = hechoRepository.countByOrigenArchivoId(archivoExistente.getId());
+            hechosTodaviaExisten = cantidadHechos > 0;
+            log.info("Archivo ya procesado. Hechos existentes: {}", cantidadHechos);
+        }
+        
+        ArchivoDatasetMongo archivo;
+        boolean esReprocesamiento = archivoYaProcesado && hechosTodaviaExisten;
+        
+        if (archivoYaProcesado) {
+            archivo = archivoExistente;
+            
+            if (hechosTodaviaExisten) {
+                // Caso: Archivo Y hechos existen → REPROCESAR
+                log.info("Reprocesando archivo (hash: {}). Eliminando {} hechos anteriores...", hash, hechoRepository.countByOrigenArchivoId(archivo.getId()));
+                hechoRepository.deleteByOrigenArchivoId(archivo.getId());
+                archivo.setEstado(EstadoArchivo.REPROCESADO);
+            } else {
+                // Caso: Archivo existe PERO hechos NO → Posible corrupción, procesar como nuevo
+                log.warn("Archivo existe pero sin hechos asociados (hash: {}). Procesando como recuperación...", hash);
+                archivo.setEstado(EstadoArchivo.PROCESADO);
+            }
+            
+            archivo.setFechaCarga(LocalDateTime.now());
+        } else {
+            // Caso: Archivo nuevo
+            log.info("Archivo nuevo (hash: {})", hash);
+            archivo = new ArchivoDatasetMongo(
+                    file.getOriginalFilename(),
+                    hash,
+                    LocalDateTime.now(),
+                    EstadoArchivo.PROCESADO
+            );
+        }
+        
+        // Guardar/actualizar archivo en MongoDB
+        archivo = archivoRepository.save(archivo);
+
+        try (CSVReader reader = new CSVReader(new InputStreamReader(file.getInputStream()))) {
+            String[] linea;
+            // si tu CSV tiene encabezado fijo, podés leer una vez para saltearlo:
+            reader.readNext(); // para saltear el encabezado
+
+            // Primera pasada: leer todas las líneas válidas
+            List<String[]> lineasValidas = new ArrayList<>();
+            while ((linea = reader.readNext()) != null) {
+                procesadas++;
+                try {
+                    if (linea.length < 6) {
+                        salteadas++;
+                        errores.add("Fila " + procesadas + ": columnas insuficientes (" + linea.length + ")");
+                        continue;
+                    }
+
+                    String titulo = safe(linea[0]);
+                    if (titulo.isEmpty()) {
+                        salteadas++; errores.add("Fila " + procesadas + ": título vacío"); continue;
+                    }
+
+                    // Validaciones básicas pasaron, agregar a lista de líneas válidas
+                    lineasValidas.add(linea);
+                } catch (Exception e) {
+                    salteadas++;
+                    errores.add("Fila " + procesadas + ": error " + e.getMessage());
+                }
+            }
+
+            // Solicitar IDs en lote ya no es necesario - JPA los genera automáticamente
+            if (!lineasValidas.isEmpty()) {
+                log.info("Procesando {} hechos válidos", lineasValidas.size());
+            }
+
+            // Segunda pasada: procesar líneas válidas (sin asignar IDs manualmente)
+            for (int i = 0; i < lineasValidas.size(); i++) {
+                try {
+                    linea = lineasValidas.get(i);
+                    String titulo = safe(linea[0]);
+                    String descripcion = safe(linea[1]);
+                    String categoria = safe(linea[2]);
+                    String latStr = safe(linea[3]);
+                    String lonStr = safe(linea[4]);
+                    String fechaStr = safe(linea[5]);
+
+                    double lat = Double.parseDouble(latStr.replace(",", "."));
+                    double lon = Double.parseDouble(lonStr.replace(",", "."));
+
+                    HechoEstatico hecho = new HechoEstatico();
+                    
+                    hecho.setTitulo(titulo);
+                    hecho.setDescripcion(descripcion);
+                    hecho.setCategoria(categoria);
+
+                    Ubicacion ubicacion = new Ubicacion();
+                    ubicacion.setLatitud(lat);
+                    ubicacion.setLongitud(lon);
+                    hecho.setUbicacion(ubicacion);
+
+                    hecho.setFechaHecho(parsearFechaFlexible(fechaStr));
+                    hecho.setOrigen(OrigenHecho.DATASET);
+                    hecho.setFechaCarga(LocalDateTime.now());
+
+                    // Asociar el archivo al hecho
+                    hecho.setOrigenArchivoId(archivo.getId());
+
+                    // Como ya eliminamos todos los hechos del archivo anteriormente (si era reprocesamiento),
+                    // simplemente insertamos
+                    hechoRepository.save(hecho);
+                    insertadas++;
+
+                } catch (NumberFormatException nfe) {
+                    salteadas++; errores.add("Fila " + procesadas + ": lat/long inválidas (" + nfe.getMessage() + ")");
+                } catch (DateTimeException dte) {
+                    salteadas++; errores.add("Fila " + procesadas + ": fecha inválida (" + dte.getMessage() + ")");
+                } catch (Exception ex) {
+                    salteadas++; errores.add("Fila " + procesadas + ": error inesperado (" + ex.getMessage() + ")");
+                }
+            }
+
+            archivo.setEstado(EstadoArchivo.PROCESADO);
+            archivo.setFilasProcesadas(procesadas);
+            archivo.setHechoInsertados(insertadas);
+            archivo.setHechosReemplazados(reemplazadas);
+            archivo.setFilasSalteadas(salteadas);
+            archivo.setErrores(errores);
+            archivoRepository.save(archivo);
+            
+            // Construir mensaje apropiado según el caso
+            String mensaje;
+            if (esReprocesamiento) {
+                mensaje = "⚠️ Archivo ya procesado anteriormente. Hechos actualizados.";
+            } else if (archivoYaProcesado) {
+                mensaje = "⚠️ Archivo conocido sin hechos. Procesado como recuperación.";
+            } else {
+                mensaje = "✅ Archivo procesado exitosamente.";
+            }
+            
+            return construirResultado(archivo, mensaje);
+
+        } catch (IOException | CsvValidationException e) {
+            archivo.setEstado(EstadoArchivo.FALLIDO);
+            archivoRepository.save(archivo);
+            throw new IllegalArgumentException("No se pudo leer el CSV: " + e.getMessage());
+        }
+    }
+
+    private static String safe(String s) { return (s == null) ? "" : s.trim(); }
+
+    // Java 8: dos listas de patrones, datetime y date
+    private LocalDateTime parsearFechaFlexible(String fechaStr) {
+        if (fechaStr == null || fechaStr.trim().isEmpty()) {
+            throw new DateTimeException("fecha vacía");
+        }
+
+        DateTimeFormatter[] DATE_TIME_FORMATS = new DateTimeFormatter[] {
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"),
+                DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss"),
+                DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss")
+        };
+        DateTimeFormatter[] DATE_FORMATS = new DateTimeFormatter[] {
+                DateTimeFormatter.ofPattern("yyyy-MM-dd"),
+                DateTimeFormatter.ofPattern("dd/MM/yyyy"),
+                DateTimeFormatter.ofPattern("MM/dd/yyyy")
+        };
+
+        for (int i = 0; i < DATE_TIME_FORMATS.length; i++) {
+            try {
+                return LocalDateTime.parse(fechaStr, DATE_TIME_FORMATS[i]);
+            } catch (Exception ignore) {}
+        }
+        for (int i = 0; i < DATE_FORMATS.length; i++) {
+            try {
+                return LocalDate.parse(fechaStr, DATE_FORMATS[i]).atStartOfDay();
+            } catch (Exception ignore) {}
+        }
+        throw new DateTimeException("formato de fecha no reconocido: " + fechaStr);
+    }
+
+    // Para construir el resultado
+    private CargaCsvResultado construirResultado(ArchivoDatasetMongo archivo, String mensaje) {
+        return new CargaCsvResultado(
+            archivo.getFilasProcesadas(),
+            archivo.getHechoInsertados(),
+            archivo.getHechosReemplazados(),
+            archivo.getFilasSalteadas(),
+            archivo.getErrores(),
+            mensaje
+        );
+    }
+
+    // esto es para calcular el hash
+    private String calcularSha256(MultipartFile file) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] buf = new byte[8192];
+            InputStream in = file.getInputStream();
+            int r;
+            while ((r = in.read(buf)) != -1) md.update(buf, 0, r);
+            byte[] digest = md.digest();
+            StringBuilder sb = new StringBuilder();
+            for (byte b : digest) sb.append(String.format("%02x", b));
+            return sb.toString();
+        } catch (Exception e) {
+            // si falla, devolvemos algo estable (nombre + size) para no romper flujo
+            return (file.getOriginalFilename() + ":" + file.getSize());
+        }
+    }
+
+    @Override
+    public List<Hecho> obtenerHechos() {
+        // Convertir HechoEstatico a Hecho para compatibilidad
+        return hechoRepository.findAll().stream()
+            .map(this::convertirAHecho)
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public Hecho obtenerHechoPorId(Long id) {
+        // Nota: MongoDB usa String como ID, no Long
+        return null; // Deprecar este método o manejar conversión
+    }
+    
+    public HechoEstatico obtenerHechoPorMongoId(String id) {
+        return hechoRepository.findById(id).orElse(null);
+    }
+    
+    // Convertir de HechoEstatico (MongoDB) a Hecho (domain)
+    private Hecho convertirAHecho(HechoEstatico hechoEstatico) {
+        Hecho hecho = new Hecho();
+        // Convertir ObjectId de MongoDB a Long usando hashCode
+        if (hechoEstatico.getId() != null) {
+            hecho.setId((long) hechoEstatico.getId().hashCode());
+        }
+        hecho.setTitulo(hechoEstatico.getTitulo());
+        hecho.setDescripcion(hechoEstatico.getDescripcion());
+        hecho.setCategoria(hechoEstatico.getCategoria());
+        hecho.setUbicacion(hechoEstatico.getUbicacion());
+        hecho.setFechaHecho(hechoEstatico.getFechaHecho());
+        hecho.setFechaCarga(hechoEstatico.getFechaCarga());
+        hecho.setOrigen(hechoEstatico.getOrigen());
+        return hecho;
+    }
+    
+    @Override
+    public void agregarHecho(Hecho hecho) {
+        throw new UnsupportedOperationException("Los hechos estáticos se cargan únicamente desde datasets");
+    }
+    
+    @Override
+    public void eliminarHecho(String id) {
+        hechoRepository.deleteById(id);
+    }
+    
+    @Override
+    public String getTipo() {
+        return "ESTATICA";
+    }
+    
+    @Override
+    public String getIdentificador() {
+        return identificador;
+    }
+    
+    public int getCantidadHechos() {
+        return (int) hechoRepository.count();
+    }
+
+    public List<Hecho> obtenerHechosNuevos(LocalDateTime fechaUltimaConsulta) {
+        if (fechaUltimaConsulta == null) return obtenerHechos();
+
+        return hechoRepository.findAll().stream()
+                .filter(h -> h.getFechaCarga() != null && h.getFechaCarga().isAfter(fechaUltimaConsulta))
+                .map(this::convertirAHecho)
+                .collect(Collectors.toList());
+    }
+
+    public List<ArchivoDatasetMongo> listarArchivos() {
+        return archivoRepository.findAll();
+    }
+
+    public ArchivoDatasetMongo obtenerArchivo(String id) {
+        return archivoRepository.findById(id).orElse(null);
+    }
+
+    public void limpiarHechos() {
+        hechoRepository.deleteAll();
+    }
+}

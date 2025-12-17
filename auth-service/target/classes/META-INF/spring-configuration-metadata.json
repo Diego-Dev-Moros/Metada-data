@@ -1,0 +1,78 @@
+{
+  "groups": [
+    {
+      "name": "auth0",
+      "type": "com.metamapa.auth.config.Auth0Properties",
+      "sourceType": "com.metamapa.auth.config.Auth0Properties"
+    },
+    {
+      "name": "cors",
+      "type": "com.metamapa.auth.config.CorsProperties",
+      "sourceType": "com.metamapa.auth.config.CorsProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "auth0.audience",
+      "type": "java.lang.String",
+      "description": "Audience de la API (ej: https:\/\/metamapa-api)",
+      "sourceType": "com.metamapa.auth.config.Auth0Properties"
+    },
+    {
+      "name": "auth0.client-id",
+      "type": "java.lang.String",
+      "description": "Client ID de la aplicación en Auth0",
+      "sourceType": "com.metamapa.auth.config.Auth0Properties"
+    },
+    {
+      "name": "auth0.client-secret",
+      "type": "java.lang.String",
+      "description": "Client Secret de la aplicación (NO compartir)",
+      "sourceType": "com.metamapa.auth.config.Auth0Properties"
+    },
+    {
+      "name": "auth0.domain",
+      "type": "java.lang.String",
+      "description": "Dominio de Auth0 (ej: dev-x8zpgn3i6vnkjg4m.us.auth0.com)",
+      "sourceType": "com.metamapa.auth.config.Auth0Properties"
+    },
+    {
+      "name": "auth0.management-api-token",
+      "type": "java.lang.String",
+      "description": "Token de la Management API de Auth0 (opcional) Se usa para operaciones administrativas como crear usuarios",
+      "sourceType": "com.metamapa.auth.config.Auth0Properties"
+    },
+    {
+      "name": "auth0.namespace",
+      "type": "java.lang.String",
+      "description": "Namespace para claims personalizados (ej: https:\/\/metamapa.com)",
+      "sourceType": "com.metamapa.auth.config.Auth0Properties"
+    },
+    {
+      "name": "cors.allow-credentials",
+      "type": "java.lang.Boolean",
+      "sourceType": "com.metamapa.auth.config.CorsProperties"
+    },
+    {
+      "name": "cors.allowed-headers",
+      "type": "java.util.List<java.lang.String>",
+      "sourceType": "com.metamapa.auth.config.CorsProperties"
+    },
+    {
+      "name": "cors.allowed-methods",
+      "type": "java.util.List<java.lang.String>",
+      "sourceType": "com.metamapa.auth.config.CorsProperties"
+    },
+    {
+      "name": "cors.allowed-origins",
+      "type": "java.util.List<java.lang.String>",
+      "sourceType": "com.metamapa.auth.config.CorsProperties"
+    },
+    {
+      "name": "cors.max-age",
+      "type": "java.lang.Long",
+      "sourceType": "com.metamapa.auth.config.CorsProperties"
+    }
+  ],
+  "hints": []
+}

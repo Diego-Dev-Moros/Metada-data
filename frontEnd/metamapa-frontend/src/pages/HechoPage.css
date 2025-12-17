@@ -1,0 +1,95 @@
+.hecho-page {
+    min-height: 100vh;
+    padding: 2rem;
+    background-color: #f5f5f5;
+}
+
+.hecho-container {
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.hecho-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.btn-volver {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-volver:hover {
+    background-color: #5a6268;
+}
+
+.btn-eliminar {
+    background-color: #dc3545;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background-color 0.2s;
+}
+
+.btn-eliminar:hover {
+    background-color: #c82333;
+}
+
+.btn-eliminar:active {
+    background-color: #bd2130;
+}
+
+.hecho-container h1 {
+    color: #333;
+    margin-bottom: 1.5rem;
+}
+
+.hecho-imagen {
+    width: 100%;
+    margin-bottom: 1.5rem;
+}
+
+.hecho-imagen img {
+    width: 100%;
+    max-height: 500px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.hecho-info {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1.5rem;
+}
+
+.hecho-info p {
+    margin: 0.5rem 0;
+    color: #555;
+}
+
+.hecho-descripcion h2 {
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.hecho-descripcion p {
+    color: #555;
+    line-height: 1.6;
+}

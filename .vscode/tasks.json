@@ -1,0 +1,47 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Run Agregador Application",
+			"type": "shell",
+			"command": "mvn",
+			"args": [
+				"spring-boot:run",
+				"-pl",
+				"agregador"
+			],
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Run MetaMapaApplication",
+			"type": "shell",
+			"command": "java",
+			"args": [
+				"-cp",
+				"target/classes;metaMapaApplication/target/classes;common/target/classes;domain/target/classes;agregador/target/classes;fuente-dinamica/target/classes;fuente-estatica/target/classes;fuente-proxy/target/classes",
+				"com.metamapa.MetaMapaApplication"
+			],
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "test"
+		},
+		{
+			"label": "Run Spring Boot App",
+			"type": "shell",
+			"command": "cd agregador && java -cp target/classes:../target/classes:../common/target/classes:../domain/target/classes com.metamapa.AgregadorApplication",
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Run MetaMapaApplication",
+			"type": "shell",
+			"command": "java -cp \"target/classes;metaMapaApplication/target/classes;common/target/classes;domain/target/classes;agregador/target/classes;fuente-dinamica/target/classes;fuente-estatica/target/classes;fuente-proxy/target/classes\" com.metamapa.MetaMapaApplication",
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}

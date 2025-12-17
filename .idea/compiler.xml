@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="auth-service" />
+        <module name="fuente-dinamica" />
+        <module name="gestor-solicitudes" />
+        <module name="Grupo7-DDSI-TP" />
+        <module name="agregador" />
+        <module name="common" />
+        <module name="stats" />
+        <module name="fuente-estatica" />
+        <module name="metaMapaApplication" />
+        <module name="domain" />
+        <module name="fuente-proxy" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="commons" target="1.8" />
+      <module name="demo" target="1.8" />
+      <module name="dinamica" target="1.8" />
+      <module name="dominio" target="1.8" />
+      <module name="estatica" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="Grupo7-DDSI" options="-parameters" />
+      <module name="Grupo7-DDSI-TP" options="-parameters" />
+      <module name="agregador" options="-parameters" />
+      <module name="auth-service" options="-parameters" />
+      <module name="common" options="-parameters" />
+      <module name="demo" options="-parameters" />
+      <module name="dinamica" options="-parameters" />
+      <module name="domain" options="-parameters" />
+      <module name="dominio" options="-parameters" />
+      <module name="fuente-dinamica" options="-parameters" />
+      <module name="fuente-estatica" options="-parameters" />
+      <module name="fuente-proxy" options="-parameters" />
+      <module name="gestor-solicitudes" options="-parameters" />
+      <module name="metaMapaApplication" options="-parameters" />
+      <module name="metamapa" options="-parameters" />
+      <module name="stats" options="-parameters" />
+    </option>
+  </component>
+</project>

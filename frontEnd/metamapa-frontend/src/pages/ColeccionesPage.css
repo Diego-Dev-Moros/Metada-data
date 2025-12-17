@@ -1,0 +1,198 @@
+.colecciones-page {
+    padding-top: 90px; /* navbar fijo */
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    padding-bottom: 3rem;
+    background: #f5f6f8;
+    min-height: 100vh;
+}
+
+/* header con titulo y boton */
+.colecciones-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    gap: 14px;
+}
+
+.colecciones-header h1 {
+    margin: 0;
+    font-size: 2.1rem;
+}
+
+.btn-nueva {
+    background: #2f66b1;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter 0.2s;
+}
+
+.btn-nueva:hover {
+    filter: brightness(0.95);
+}
+
+/* buscador */
+.colecciones-search {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border: 1px solid #e4e6ea;
+    border-radius: 4px;
+    overflow: hidden;
+    max-width: 480px;
+}
+
+.colecciones-search input {
+    border: none;
+    padding: 10px 12px;
+    flex-grow: 1;
+    outline: none;
+    background-color: #ffffff;
+    color: #333333;
+    font-size: 0.95rem;
+}
+
+.colecciones-search input::placeholder {
+    color: #999;
+}
+
+.colecciones-search .search-btn {
+    background-color: transparent;
+    border: none;
+    padding: 10px 12px;
+    cursor: pointer;
+    font-size: 1.1rem;
+}
+
+.colecciones-search .search-btn:hover {
+    opacity: 0.7;
+}
+
+/* ordenar */
+.colecciones-order {
+    margin-top: 14px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.9rem;
+}
+
+.colecciones-order label {
+    font-weight: 500;
+}
+
+.colecciones-order select {
+    padding: 8px 12px;
+    padding-right: 36px;
+    border: 1px solid #dcdfe3;
+    border-radius: 6px;
+    background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12"><path fill="%23333" d="M6 9L1 4h10z"/></svg>') no-repeat;
+    background-position: right 12px center;
+    background-size: 12px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+
+/* lista */
+.colecciones-lista {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+}
+
+.coleccion-card {
+    background: #fff;
+    border: 1px solid #dcdfe3;
+    border-radius: 20px;
+    display: flex;
+    gap: 0;
+    overflow: hidden;
+    min-height: 110px;
+}
+
+.coleccion-body {
+    flex: 1;
+    padding: 18px 18px 18px 20px;
+}
+
+.coleccion-body h2 {
+    margin: 0 0 6px;
+    font-size: 1.3rem;
+}
+
+.coleccion-body p {
+    margin: 0;
+    color: #444;
+}
+
+/* panel de la derecha */
+.coleccion-meta {
+    min-width: 200px;
+    border-left: 1px solid #dcdfe3;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px;
+    background: #f7f9fb;
+    font-size: 0.85rem;
+}
+
+.empty-state {
+    color: #666;
+    margin-top: 10px;
+}
+
+/* responsive */
+@media (max-width: 992px) {
+    .colecciones-lista {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .colecciones-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .colecciones-search {
+        width: 100%;
+        max-width: none;
+    }
+
+    .coleccion-card {
+        flex-direction: column;
+    }
+
+    .coleccion-meta {
+        width: 100%;
+        min-width: unset;
+        border-left: none;
+        border-top: 1px solid #dcdfe3;
+        flex-direction: row;
+        gap: 12px;
+    }
+}
+
+@media (max-width: 576px) {
+    .colecciones-page {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+
+    .coleccion-meta {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
