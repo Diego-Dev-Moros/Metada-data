@@ -570,8 +570,7 @@ public class APIPublicaInternaController {
             return ResponseEntity.ok(response);
             
         } catch (Exception e) {
-            log.error("Error al verificar permisos de edición: {}", e.getMessage());ty.notFound().build();
-        } catch (Exception e) {
+            log.error("Error al verificar permisos de edición: {}", e.getMessage());
             return ResponseEntity.internalServerError().build();
         }
     }

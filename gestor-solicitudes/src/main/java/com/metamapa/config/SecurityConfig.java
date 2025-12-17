@@ -68,14 +68,14 @@ public class SecurityConfig {
 
         return http.build();
     }
-    Usa nuestro converter personalizado que busca roles en múltiples ubicaciones
+    
+    /**
+     * Usa nuestro converter personalizado que busca roles en múltiples ubicaciones
      */
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
         jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
-        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
         
         return jwtAuthenticationConverter;
     }
